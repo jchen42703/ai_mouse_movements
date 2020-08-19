@@ -10,7 +10,7 @@ setup(name='pymouse',
       packages=find_packages(),
       install_requires=[
             'numpy',
-            'keras',
+            'tensorflow',
       ],
       keywords=['deep learning'],
       )

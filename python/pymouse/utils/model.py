@@ -1,5 +1,5 @@
-from keras import Sequential
-from keras.layers import Dense, Reshape
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense, Reshape
 
 target_path_count = 100
 
