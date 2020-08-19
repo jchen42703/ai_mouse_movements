@@ -38,7 +38,7 @@ def plot(model, history, train_inputs, train_paths):
 
     plt.figure(3)
     plt.title('accuracy')
-    plt.plot(history.history['acc'])
+    plt.plot(history.history['accuracy'])
     plt.plot(history.history['loss'])
     plt.ylabel('value')
     plt.xlabel('epoch')
