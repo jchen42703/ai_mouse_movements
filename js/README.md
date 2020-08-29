@@ -4,5 +4,5 @@
 
 ```
 pip install tensorflowjs
-tensorflowjs_converter --input_format=keras model/weights.h5 model/tfjs_model
+tensorflowjs_converter --input_format=keras model/weights_5mil.h5 model/tfjs_model
 ```
