@@ -1,4 +1,5 @@
 const predict = require("./src/predict.js");
+const mouse = require("./src/mouse.js");
 const path = require("path");
 const express = require("express");
 const app = express();
@@ -16,8 +17,9 @@ app.get("/", (req, res) => {
   );
   pred_promise.then((pred_promise) => {
     var pred = pred_promise;
-    console.log(`prediction: ${pred}`);
+    console.log(`prediction: ${pred}, shape: ${pred.shape}`);
     // move mouse....
+    mouse.moveMousePath(pred);
   });
 
   /**
