@@ -1,5 +1,7 @@
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense, Reshape
+from tensorflow.keras.optimizers import Adam
+
 
 target_path_count = 100
 
