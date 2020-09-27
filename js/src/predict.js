@@ -99,10 +99,17 @@ async function loadAndPredict(modelPath, start, destination) {
   // normalize the starting point to origin
   // so that start + offset = [0, 0] & pred (assumes [0, 0])
   // so pred - offset = pred assuming start as the starting point
-  const offset = tf.mul(tf.scalar(-1), start);
+  var offset = tf.mul(tf.scalar(-1), start);
   dest = tf.add(dest, offset);
   var pred = model.predict(dest);
   pred.print(); // testing
+  offset = offset.squeeze();
+  // accomodate for shape (100, 3) w/ (100, 2)->(100, 3)
+  offset = tf.tensor2d(
+    [offset.slice([0], 1).dataSync()[0], offset.slice([1], 1).dataSync()[0], 0],
+    [1, 3]
+  );
+  console.log(`offset: ${offset}`);
   pred = tf.sub(pred, offset);
   return pred;
 }
