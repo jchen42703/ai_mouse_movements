@@ -7,6 +7,7 @@ function moveMousePath(pathsTensor) {
   console.log(`pathsTensor: ${pathsArray}`);
   pathsArray.forEach((coords) => {
     console.log(`coords: ${coords}`);
+    robotjs.setMouseDelay(coords[2]);
     robotjs.moveMouse(coords[0], coords[1]);
   });
   //   for (coords in pathsTensor) {
