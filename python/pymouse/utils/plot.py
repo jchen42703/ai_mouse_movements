@@ -119,3 +119,41 @@ def plot(model, history, train_inputs, train_paths):
     plt.show()
 
     return
+
+
+def extract_dts_from_coords_dt(coords_dt):
+    """
+    
+    Args:
+        coords_dt (np.ndarray): with shape (num_paths, path_count, 3)
+
+    Returns:
+        dt_list (list): nested list of path dts
+    """
+    # dt_list is a nested list of paths dts
+    dt_list = []
+    for path in coords_dt:
+        path_dt = []
+        # Note: path is an array of coords (path_count, 3)
+        for coord in path:
+            path_dt.append(coord[-1])
+        dt_list.append(path_dt)
+    return dt_list
+
+
+def plot_dt_list(dt_sublist, num_rows=3, num_cols=3, figsize=(24, 24)):
+    """Plots distributions of the time deltas.
+
+    Args:
+        dt_sublist (list[List[float]]): nested list of dts (sublist to plot)
+    """
+    num_plots = num_rows*num_cols
+    assert len(dt_sublist) == num_plots, \
+        'The length of the sublist must be the same as rows*cols'
+    print(f'Plotting {num_plots} plots.')
+    fig, axes = plt.subplots(num_rows, num_cols, figsize=figsize)
+    for row in range(num_rows):
+        for col in range(num_cols):
+            curr_path = row*col
+            axes[row, col].hist(dt_sublist[curr_path])
+    plt.show()

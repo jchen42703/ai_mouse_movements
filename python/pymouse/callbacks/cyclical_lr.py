@@ -79,3 +79,48 @@ class SGDRScheduler(tf.keras.callbacks.Callback):
     def on_train_end(self, logs={}):
         '''Set weights to the values from the end of the most recent cycle for best performance.'''
         self.model.set_weights(self.best_weights)
+
+
+
+def find_clr_params_checkpoint(num_epochs, lr_range, lr_decay=0.9, cycle_length=3, mult_factor=1.5):
+    """Determines the new paramters for SGDRScheduler after loading a model from a checkpoint for
+    training.
+    
+    Note: only max_lr is decayed, so it's misleading
+        fraction_to_restart = self.batch_since_restart / (self.steps_per_epoch * self.cycle_length)
+        lr = self.min_lr + 0.5 * (self.max_lr - self.min_lr) * (1 + np.cos(fraction_to_restart * np.pi))
+        ...
+        self.max_lr *= self.lr_decay
+
+    Args:
+        num_epochs (int): Number of epochs elapsed
+        lr_range (tuple/list): learning rate range for CLR
+        lr_decay (float):
+        cycle_length (int):
+        mult_factor (float):
+
+    Returns:
+        lr_range: the new learning rate range
+        final_cycle_length: The cycle length to input to the callback after
+            loading the checkpoint
+    """
+    min_lr = lr_range[0]
+    cycle_lengths = []
+    num_cycles = 0
+    print(f'Original cycle length: {cycle_length}')
+#     iter_epoch = int(num_epochs) # makes copy
+    while sum(cycle_lengths) < num_epochs:
+#         iter_epoch = iter_epoch-cycle_length
+        if num_cycles != 0:
+            # end of cycle
+            cycle_length = np.ceil(cycle_length * mult_factor)
+        cycle_lengths.append(cycle_length)
+        num_cycles += 1
+
+    assert len(cycle_lengths) == num_cycles
+    lr_range = list(map(lambda x: x**(lr_decay*num_cycles), lr_range))
+    # Only max_lr is decayed
+    lr_range = (min_lr, lr_range[-1])
+    print("cycle lengths: ", cycle_lengths)
+    print(f'Number of cycles: {num_cycles},\nFinal cycle length: {cycle_lengths[-1]}, \nlr_range: {lr_range}')
+    return lr_range, cycle_lengths[-1]
