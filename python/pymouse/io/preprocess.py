@@ -12,6 +12,46 @@ def get_stats(events):
             \nSTD: {events.std()}')
 
 
+def minmax_normalize(arr, norm_range=[-1, 1], minmax=None):
+    """
+    Args:
+        arr: numpy array
+        minmax (Iterable[float]): (min, max) where
+            min (float): minimum of the dataset
+            max (float): maximum of the dataset
+        norm_range: list of 2 integers specifying normalizing range
+            based on https://stats.stackexchange.com/questions/178626/how-to-normalize-data-between-1-and-1
+    Returns:
+        Normalized array with outliers clipped in the specified range
+    """
+    if minmax is not None:
+        min, max = minmax
+    else:
+        min, max = np.amin(arr), np.amax(arr)
+    norm_img = ((norm_range[1]-norm_range[0]) * (arr - min) / (max - min)) + norm_range[0]
+    return norm_img
+
+
+def minmax_unnormalize(norm_arr, minmax, norm_range=[-1, 1]):
+    """Unnormalizing an array after predicting. Undos minmax_normalize
+
+    Args:
+        norm_arr (np.ndarray): prediction array with shape
+            (1, path_count, 3)
+        minmax (Iterable[float]): (min, max) where
+            min (float): minimum of the original test set (for prediction)
+            max (float): maximum of the original test set (for prediction)
+        norm_range: list of 2 integers specifying normalizing range
+            based on https://stats.stackexchange.com/questions/178626/how-to-normalize-data-between-1-and-1   
+ 
+    Returns:
+        the rescaled array
+    """
+    min, max = minmax
+    arr = ((norm_arr - norm_range[0]) / (norm_range[1]-norm_range[0]) * (max - min)) + min 
+    return arr
+
+
 def parse_data_into_coords_and_time_diffs(data_list):
     """Parses the data json dicttionary list into coordinates.
     
