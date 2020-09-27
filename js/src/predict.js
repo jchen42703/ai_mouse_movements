@@ -1,4 +1,6 @@
 const tf = require("@tensorflow/tfjs");
+const dataParams = require("./dataParams.js");
+
 require("@tensorflow/tfjs-node");
 
 async function loadModel(modelPath) {
@@ -101,8 +103,23 @@ async function loadAndPredict(modelPath, start, destination) {
   // so pred - offset = pred assuming start as the starting point
   var offset = tf.mul(tf.scalar(-1), start);
   dest = tf.add(dest, offset);
-  var pred = model.predict(dest);
+  console.log(
+    `dataParams: ${dataParams.dataParams.minmaxYTrain}, ${dataParams.dataParams}`
+  );
+  var destNorm = minmaxNormalize(
+    dest,
+    dataParams.dataParams.normRange,
+    dataParams.dataParams.minmaxYTrain
+  );
+  var pred = model.predict(destNorm);
   pred.print(); // testing
+
+  // post processing
+  pred = minmaxUnnormalize(
+    pred,
+    dataParams.dataParams.minmaxYTrain,
+    dataParams.dataParams.normRange
+  );
   offset = offset.squeeze();
   // accomodate for shape (100, 3) w/ (100, 2)->(100, 3)
   offset = tf.tensor2d(
