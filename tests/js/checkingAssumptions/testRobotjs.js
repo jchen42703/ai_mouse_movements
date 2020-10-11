@@ -19,6 +19,11 @@ function testRobotjsAssump() {
   // move with large numbers
   console.log("Moving to (1500, 800)");
   robotjs.moveMouse(1500, 800); // 1500 to the right and 800 down
+
+  // move to decimal
+  console.log("Moving to (800.53, 200.33)");
+  robotjs.moveMouse(800.53, 200.33); // 1500 to the right and 800 down
+
   obj = robotjs.getScreenSize(); // what is the screen size that robotjs interprets?
   console.log(`Screen size (w x h): ${obj.width} x  ${obj.height}`);
 }
