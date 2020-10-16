@@ -42,7 +42,6 @@ class OrigPreprocessor(object):
         if self.REFLECT_COORDS_FLAG:
             coords = reflect(coords)
         dest = create_destinations_from_paths(coords)
-
         return (coords, dest)
     
     
@@ -69,6 +68,8 @@ class OrigPreprocessor(object):
 
 
     def __combine_coords_dt(self, paths, dt_arr):
+        if self.REFLECT_COORDS_FLAG:
+            dt_arr = np.tile(dt_arr, np.asarray([4, 1, 1]))
         return np.dstack([paths, dt_arr])
 
 
@@ -268,14 +269,3 @@ def reflect(paths):
         # reference to the manipulated section
         paths[num_paths*i:num_paths*(i+1)] *= multiple
     return paths
-
-
-def predict_scale(start, dest, pred_model):
-    """Official python version of the scale/predict API
-    """
-    offset = start * -1
-    dest = dest + offset
-    pred = pred_model.predict(dest)
-    pred = scale_coords(pred, dest)
-    pred = pred - offset
-    return pred
