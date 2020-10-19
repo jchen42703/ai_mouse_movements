@@ -53,7 +53,7 @@ predictAPI.prototype.scaleCoords = function (coords, dest) {
   console.log(`X scale factor: ${xScale}`);
   console.log(`Y scale factor: ${yScale}`);
 
-  const xyScale = tf.tensor1d([xScale, yScale, 0]);
+  const xyScale = tf.tensor1d([xScale, yScale, 1]);
 
   let scaled = tf.mul(coords, xyScale);
 
@@ -61,21 +61,28 @@ predictAPI.prototype.scaleCoords = function (coords, dest) {
 };
 
 /**
- *
+ * Postprocess (scale API method).
  * @param {tf.Tensor} pred
  * @return {tf.Tensor} path that starts at this.startTensor and ends at
  * this.destTensor
  */
 predictAPI.prototype.postprocess = function (pred) {
+  let pred = pred.squeeze();
   // 1. translate to origin
   // we don't use the predicted offset because we want to guarantee the starting
   // point to `startTensor` rather than to the predicted offset.
   let translated = this.translate2Origin(pred);
   // 2. Scale to (destination + offset)
-  const offset = tf.mul(tf.scalar(-1), this.startTensor);
+  let offset = tf.mul(tf.scalar(-1), this.startTensor);
   const newDest = tf.add(this.destTensor, offset);
   let scaled = this.scaleCoords(translated.tensor, newDest);
-  // 3. Remove offset (pred - offset).
+  // 3. Remove offset from prediction (pred - offset).
+  // accomodate for shape (100, 3) w/ (100, 2)->(100, 3)
+  offset = tf.tensor2d(
+    [offset.slice([0], 1).dataSync()[0], offset.slice([1], 1).dataSync()[0], 0],
+    [1, 3]
+  );
+  console.log(`offset: ${offset}`);
   const out = tf.subtract(scaled, offset);
   return out;
 };
