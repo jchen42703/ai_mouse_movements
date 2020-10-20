@@ -70,7 +70,7 @@ def lstm_ann_2mill(clipvalue=1, lr=1e-3):
 
     lstm1 = LSTM(500, return_sequences=True,
                  input_shape=(100, 3))(reshaped_path1)
-    lstm2 = LSTM(300, return_sequences=False, input_shape=(100, 3))(lstm1)
+    lstm2 = LSTM(300, return_sequences=False)(lstm1)
     dense4 = Dense(target_path_count * 3, activation='linear')(lstm2)
     path_out = Reshape((target_path_count, 3), name='path_out')(dense4)
     model = Model(inputs=inputs, outputs=path_out)
