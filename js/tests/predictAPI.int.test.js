@@ -40,9 +40,8 @@ test("scaleCoords test", () => {
   let translatedTensor = api.translate2Origin(testTensor);
   // translatedTensor.tensor shape -> [100 ,3]
   const scaled = api.scaleCoords(translatedTensor.tensor, [600, 500]);
-  const scaledDest = scaled.slice([-1, 0], [1, 3]);
-  console.log(`Scaled Dest Shape: ${scaledDest.shape}`);
-  tf.print(scaledDest);
-  expect(scaledDest.dataSync()[0]).toEquals(600);
-  expect(scaledDest.dataSync()[1]).toEquals(500);
+  const scaledDest = scaled.slice([99, 0], [1, 3]);
+
+  expect(scaledDest.dataSync()[0]).toEqual(600);
+  expect(scaledDest.dataSync()[1]).toEqual(500);
 });
