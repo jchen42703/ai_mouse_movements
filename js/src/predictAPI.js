@@ -31,7 +31,7 @@ predictAPI.prototype.getRandDest = function () {
  */
 predictAPI.prototype.translate2Origin = function (coords) {
   // grabbing 1st coord of coords
-  const coords1 = coords.slice([0], 3).dataSync()[0];
+  const coords1 = coords.slice([0, 0], [1, 3]);
   const offset = tf.mul(tf.scalar(-1), coords1);
   const tensor = tf.add(coords, offset);
   return { tensor, offset };
@@ -67,7 +67,7 @@ predictAPI.prototype.scaleCoords = function (coords, dest) {
  * this.destTensor
  */
 predictAPI.prototype.postprocess = function (pred) {
-  let pred = pred.squeeze();
+  pred = pred.squeeze();
   // 1. translate to origin
   // we don't use the predicted offset because we want to guarantee the starting
   // point to `startTensor` rather than to the predicted offset.
@@ -96,3 +96,5 @@ predictAPI.prototype.predict = async function () {
   pred = this.postprocess(pred);
   return pred;
 };
+
+module.exports = { predictAPI };
