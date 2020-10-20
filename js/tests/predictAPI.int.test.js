@@ -69,3 +69,21 @@ test("postprocess test (+) (+)", async () => {
   expect(lastCoord[0]).toBe(600);
   expect(lastCoord[1]).toBe(500);
 });
+
+test("Predict test", async () => {
+  let relativeModelPath = "./src/model/tfjs_model/model.json";
+  let api = new predAPI.predictAPI(relativeModelPath, [5, 300], [600, 500]);
+  let pred = (await api.predict()).squeeze();
+
+  console.log(`pred shape (after squeeze): ${pred.shape}`);
+
+  const firstCoord = pred.slice([0, 0], [1, 3]).dataSync();
+  const lastCoord = pred.slice([99, 0], [1, 3]).dataSync();
+
+  console.log(`First coord: ${firstCoord}, last: ${lastCoord}`);
+  expect(firstCoord[0]).toBe(5);
+  expect(firstCoord[1]).toBe(300);
+
+  expect(lastCoord[0]).toBe(600);
+  expect(lastCoord[1]).toBe(500);
+});
