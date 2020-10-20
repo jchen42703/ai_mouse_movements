@@ -52,8 +52,8 @@ predictAPI.prototype.scaleCoords = function (coords, dest) {
   const xScale = dest[0] / lastCoord[0];
   const yScale = dest[1] / lastCoord[1];
 
-  console.log(`X scale factor: ${xScale}`);
-  console.log(`Y scale factor: ${yScale}`);
+  // console.log(`X scale factor: ${xScale}`);
+  // console.log(`Y scale factor: ${yScale}`);
 
   const xyScale = tf.tensor1d([xScale, yScale, 1]);
 
@@ -76,16 +76,13 @@ predictAPI.prototype.postprocess = function (pred) {
   let translated = this.translate2Origin(pred);
   // 2. Scale to (destination + offset)
   let offset = tf.mul(tf.scalar(-1), this.startTensor);
-  const newDest = tf.add(this.destTensor, offset);
+  const newDest = tf.add(this.destTensor, offset).dataSync();
   let scaled = this.scaleCoords(translated.tensor, newDest);
   // 3. Remove offset from prediction (pred - offset).
   // accomodate for shape (100, 3) w/ (100, 2)->(100, 3)
-  offset = tf.tensor2d(
-    [offset.slice([0], 1).dataSync()[0], offset.slice([1], 1).dataSync()[0], 0],
-    [1, 3]
-  );
-  console.log(`offset: ${offset}`);
-  const out = tf.subtract(scaled, offset);
+  const offsetArr = offset.dataSync();
+  offset = tf.tensor2d([[offsetArr[0], offsetArr[1], 0]], [1, 3]);
+  const out = tf.sub(scaled, offset);
   return out;
 };
 
@@ -93,7 +90,7 @@ predictAPI.prototype.predict = async function () {
   /* Loads the model locally from the relative model path, `modelPath`*/
   const model = await tf.loadLayersModel(`file://${this.modelPath}`);
   let posDest = this.getRandDest();
-  let pred = model.predict(posDest);
+  let pred = model.predict(tf.tensor2d(posDest, [1, 2]));
   pred.print(); // testing
   pred = this.postprocess(pred);
   return pred;
