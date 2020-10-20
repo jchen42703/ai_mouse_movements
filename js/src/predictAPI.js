@@ -23,7 +23,7 @@ predictAPI.prototype.getRandDest = function () {
 
 /**
  * Translates coordinates such that the starting coordinate is @ (0, 0, 0).
- * @param {tf.Tensor} coords with shape (path_count, 2 (or 3)).
+ * @param {tf.Tensor} coords with shape (path_count, 3)).
  * Assumes that all of the coords >= 0.
  * @return {obj{tf.Tensor, tf.Tensor}} the translated coords (tensor) and the offset
  * offset is defined as the (-1) * start, so start + offset = (0, 0, 0).
@@ -40,15 +40,17 @@ predictAPI.prototype.translate2Origin = function (coords) {
 /**
  * Scales the coordinates so that the destination of `coords` matches
  * `dest`.
- * @param {tf.Tensor} coords with shape (path_count, 2 (or 3)).
+ * @param {tf.Tensor} coords with shape (path_count, 3)).
  * Assumes that all of the coords >= 0 and start at the origin.
  * @param {array} dest [X, Y] coordinate for the desired destination.
  * @return {tf.Tensor} the properly scaled coordinates.
  */
 predictAPI.prototype.scaleCoords = function (coords, dest) {
   // Ratio desired_destination / coord_destination
-  const xScale = dest[0] / coords[-1][0];
-  const yScale = dest[1] / coords[-1][1];
+  const lastCoord = coords.slice([99, 0], [1, 3]).dataSync();
+
+  const xScale = dest[0] / lastCoord[0];
+  const yScale = dest[1] / lastCoord[1];
 
   console.log(`X scale factor: ${xScale}`);
   console.log(`Y scale factor: ${yScale}`);
