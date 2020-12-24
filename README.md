@@ -1,5 +1,6 @@
 # API for Generating Mouse Movements with Neural Networks
 
+![](images\mouse_movement_mvp.gif)
 Send POST requests to automatically move your mouse with a neural network!
 
 ## Table of Contents
