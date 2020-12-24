@@ -4,11 +4,12 @@ Send POST requests to automatically move your mouse with a neural network!
 
 ## Table of Contents
 
-- [`pymouse`](#pymouse)
+- [`pymousegan`](#pymousegan)
   - [Getting Started](#getting-started)
   - [Dependencies](#dependencies)
-  - [Actual Training Pipeline](#actual-training-pipeline)
-    - [Path Model](#path-model)
+  - [Training Pipeline](#training-pipeline)
+    - [Preprocessing](#preprocessing)
+    - [GAN](#gan)
 - [JS API](#js-api)
   - [Getting Started (Client)](#getting-started-client)
   - [Model Format Conversion](#model-format-conversion)
@@ -17,17 +18,11 @@ Send POST requests to automatically move your mouse with a neural network!
 
 ---
 
-**Credits to:**
+## pymousegan
 
-- [Natural-Mouse-Movements-Neural-Networks](https://github.com/DaiCapra/Natural-Mouse-Movements-Neural-Networks)
+This is the Python library containing the code for creating neural networks.
 
----
-
-## pymouse
-
-This is the Python library containing the code for the training pipeline for the models.
-
-The training is mainly done in the Colaboratory notebook. `pymouse` mainly contains some utility functions for callbacks and visualization. The actual training code isn't imported from the module for flexibility, but the training code exists in the library.
+The training is done in the Colaboratory notebook. `pymousegan` contains the models and training pipeline for the GAN.
 
 Example notebooks are located at [`python/notebooks`](https://github.com/jchen42703/ai_mouse_movements/python/notebooks)
 
@@ -46,14 +41,20 @@ pip install .
 - `pandas`
 - `matplotlib`
 
-### Actual Training Pipeline
+### Training Pipeline
 
-#### Path Model
+#### Preprocessing
 
-- No preprocessing besides reshaping.
-- Training with the path model in `utils.model.py` with `mse`.
-  - Start off with `LRFinder` to get the learning rate range and use that range when training again from scratch with the `SGDRScheduler`.
-- Predict and you're done!
+1. Translated so that the starting coordinate is `(0, 0)`.
+2. Scaled so that the destination coordinates is `(1, 1)`.
+3. Reflection across all axes done during training.
+
+#### GAN
+
+The model used in the current version is a `BidirectionalLSTMDecoderGenerator` from an `AdditiveBasicGAN` with a `BidirectionalLSTMDiscriminator` (with minibatch discrimination) and `BidirectionalLSTMDecoderGenerator`. The full example is located at https://github.com/jchen42703/ai_mouse_movements/python/README.md.
+
+Here are the model summaries:
+![](images\model_summaries.png)
 
 ---
 
