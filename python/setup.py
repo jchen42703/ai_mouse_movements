@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
-setup(name='pymouse',
-      version='0.0.2',
+setup(name='pymousegan',
+      version='0.0.1',
       description='Library for models for generating random mouse movements',
       url='',
       author='Joseph Chen',
@@ -9,10 +9,10 @@ setup(name='pymouse',
       license='MIT',
       packages=find_packages(),
       install_requires=[
-            'numpy',
-            'tensorflow',
-            'pandas',
-            'matplotlib'
+          'numpy',
+          'tensorflow',
+          'pandas',
+          'matplotlib'
       ],
       keywords=['deep learning'],
       )
