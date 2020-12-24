@@ -19,10 +19,9 @@ def get_paths_coords(paths):
     Returns:
         (X, Y): tuple of lists of the coordinates
     """
+    X = []
+    Y = []
     for path in paths:
-        X = []
-        Y = []
-
         for point in path:
             X.append(point[0])
             Y.append(point[1])
