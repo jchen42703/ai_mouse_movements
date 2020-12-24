@@ -1,5 +1,4 @@
 const tf = require("@tensorflow/tfjs");
-const destJson = require("./model/dest.json");
 
 require("@tensorflow/tfjs-node");
 
@@ -16,9 +15,13 @@ function predictAPI(modelPath, start, destination) {
   this.destTensor = tf.tensor2d(destination, [1, 2]);
 }
 
-predictAPI.prototype.getRandDest = function () {
-  // Only gets positive coords
-  return destJson[Math.floor(Math.random() * destJson.length)];
+/**
+ * Generates the random noise for the generator. (normal distribution)
+ * @param {array} noiseSize should be [batch_size, 100, num_latent_dims]
+ * @return {tf.Tensor} the random noise with the shape, noiseSize
+ */
+predictAPI.prototype.getRandNoise = function (noiseSize) {
+  return tf.randomNormal(noiseSize, 0, 1);
 };
 
 /**
@@ -89,8 +92,8 @@ predictAPI.prototype.postprocess = function (pred) {
 predictAPI.prototype.predict = async function () {
   /* Loads the model locally from the relative model path, `modelPath`*/
   const model = await tf.loadLayersModel(`file://${this.modelPath}`);
-  let posDest = this.getRandDest();
-  let pred = model.predict(tf.tensor2d(posDest, [1, 2]));
+  let randNoise = this.getRandNoise([1, 100, 100]);
+  let pred = model.predict(randNoise);
   pred.print(); // testing
   pred = this.postprocess(pred);
   return pred;
