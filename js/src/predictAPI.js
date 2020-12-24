@@ -118,7 +118,7 @@ predictAPI.prototype.predict = async function () {
   const model = await tf.loadLayersModel(`file://${this.modelPath}`);
   let randNoise = this.getRandNoise([1, 100, 100]);
   let pred = model.predict(randNoise);
-  pred.print(); // testing
+  // pred.print(); // testing
   pred = this.postprocess(pred);
   return pred;
 };
