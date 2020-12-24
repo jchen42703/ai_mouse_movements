@@ -69,10 +69,12 @@ predictAPI.prototype.scaleCoords = function (coords, dest) {
  * Postprocess (scale API method).
  * @param {tf.Tensor} pred
  * @return {tf.Tensor} path that starts at this.startTensor and ends at
- * this.destTensor
+ * this.destTensor and a time distribution; shape: (100, 3)
  */
 predictAPI.prototype.postprocess = function (pred) {
   pred = pred.squeeze();
+
+  const dt = this.postprocessDT(pred);
   // 1. translate to origin
   // we don't use the predicted offset because we want to guarantee the starting
   // point to `startTensor` rather than to the predicted offset.
@@ -86,7 +88,29 @@ predictAPI.prototype.postprocess = function (pred) {
   const offsetArr = offset.dataSync();
   offset = tf.tensor2d([[offsetArr[0], offsetArr[1], 0]], [1, 3]);
   const out = tf.sub(scaled, offset);
-  return out;
+  return out.concat(dt, (axis = 1));
+};
+
+/**
+ *
+ * @param {tf.Tensor} pred squeezed prediction tensor with shape [100, 3]
+ * @returns {tf.Tensor} 1d tensor of times
+ */
+predictAPI.prototype.getDT = function (pred) {
+  const unstacked = tf.unstack(pred);
+  let dt = [];
+  unstacked.forEach((tensor) => dt.push(tensor.slice(2, 1).arraySync()[0]));
+  return tf.expandDims(tf.tensor1d(dt), (axis = -1));
+};
+
+predictAPI.prototype.postprocessDT = function (squeezedPred) {
+  let dt = this.getDT(squeezedPred);
+  const min = dt.min();
+  // console.log(`dt min ${min.dataSync()}`);
+  if (min.dataSync() < 0) {
+    dt = tf.add(dt, min.mul(-1));
+  }
+  return tf.mul(dt, 250);
 };
 
 predictAPI.prototype.predict = async function () {
