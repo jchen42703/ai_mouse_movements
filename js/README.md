@@ -10,7 +10,7 @@
 {
     "start": [1, 1],
     "destination": [82 ,55],
-  	"moveMouse": 1
+    "moveMouse": 1
 }
 ```
 
