@@ -7,7 +7,7 @@ def json_to_numpy(data_list):
     arr = np.zeros((len(data_list), 100, 3))
     for i in range(len(data_list)):
         x = data_list[i]['x']
-        y = data_list[i]['y'] 
+        y = data_list[i]['y']
         t = data_list[i]['t']
         path_dt = list(zip(x, y, t))
         arr[i] = np.asarray(path_dt)
@@ -61,6 +61,26 @@ def minmax_normalize(arr, norm_range=[-1, 1], minmax=None):
     return norm_img
 
 
+def minmax_unnormalize(norm_arr, minmax, norm_range=[-1, 1]):
+    """Unnormalizing an array after predicting. Undos minmax_normalize
+    Args:
+        norm_arr (np.ndarray): prediction array with shape
+            (1, path_count, 3)
+        minmax (Iterable[float]): (min, max) where
+            min (float): minimum of the original test set (for prediction)
+            max (float): maximum of the original test set (for prediction)
+        norm_range: list of 2 integers specifying normalizing range
+            based on https://stats.stackexchange.com/questions/178626/how-to-normalize-data-between-1-and-1   
+
+    Returns:
+        the rescaled array
+    """
+    min, max = minmax
+    arr = ((norm_arr - norm_range[0]) /
+           (norm_range[1]-norm_range[0]) * (max - min)) + min
+    return arr
+
+
 def remove_bad_indices(paths, bad_indices):
     """Removes all arrays with indices in bad_coords from paths.
     """
@@ -94,6 +114,9 @@ def preprocess(data_list, dt_thresh=1000, elapsed_thresh=1500):
     coords_dt = json_to_numpy(data_list)
     coords_dt[:, :, -1] = t_to_dt(coords_dt[:, :, -1])
     coords_dt = remove_outliers(coords_dt, dt_thresh, elapsed_thresh)
+    print('Before minmax normalization;' +
+          f'dt min: {coords_dt[:, :, -1].min()}' +
+          f'dt max: {coords_dt[:, :, -1].max()}')
     coords_dt[:, :, :-1] = minmax_normalize(coords_dt[:, :, :-1])
     coords_dt[:, :, -1] = minmax_normalize(coords_dt[:, :, -1], [0, 1])
     return coords_dt
