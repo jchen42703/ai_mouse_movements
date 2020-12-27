@@ -77,6 +77,8 @@ Here are the model summaries:
 
 If you want a `json` response of the coords and lags, then do `"mouseMove": 0`.
 
+![](images\mouseMove0.png)
+
 ### Model Format Conversion
 
 #### From `tf.keras` to `.json`
