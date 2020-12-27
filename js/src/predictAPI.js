@@ -123,4 +123,9 @@ predictAPI.prototype.predict = async function () {
   return pred;
 };
 
+predictAPI.prototype.parseToJson = function (pred) {
+  const predArray = pred.arraySync();
+  return { coords: predArray };
+};
+
 module.exports = { predictAPI };
