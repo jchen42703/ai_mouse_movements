@@ -22,9 +22,14 @@ app.post("/", (req, res) => {
     var pred = pred_promise;
     // console.log(`prediction: ${pred}, shape: ${pred.shape}`);
     // move mouse....
-    mouse.moveMousePath(pred);
+    if (req.body.moveMouse) {
+      mouse.moveMousePath(pred);
+      res.end("Movement done!");
+    } else {
+      const mouseJson = api.parseToJson(pred);
+      res.send(mouseJson);
+    }
   });
-  res.end("Movement done!");
 });
 
 app.get("/", (req, res) => {
