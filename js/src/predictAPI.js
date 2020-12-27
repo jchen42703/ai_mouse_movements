@@ -124,7 +124,10 @@ predictAPI.prototype.predict = async function () {
 };
 
 predictAPI.prototype.parseToJson = function (pred) {
-  const predArray = pred.arraySync();
+  let predArray = pred.arraySync();
+  for (let i = 0; i < predArray.length; i++) {
+    predArray[i] = [predArray[i][0], predArray[i][1], predArray[i][3]];
+  }
   return { coords: predArray };
 };
 
