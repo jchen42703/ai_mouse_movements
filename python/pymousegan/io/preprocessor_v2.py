@@ -176,7 +176,7 @@ def translate_to_origin(paths):
 
 
 def convert_and_preprocess(data_list, dt_thresh=1000, elapsed_thresh=1500,
-                           value_thresh=1.05, num_loops=30):
+                           value_thresh=1.05, num_loops=30, norm_dt=False):
     coords_dt = json_to_numpy(data_list)
     coords_dt[:, :, -1] = t_to_dt(coords_dt[:, :, -1])
     coords_dt[:, :, :-1] = translate_to_origin(coords_dt[:, :, :-1])[0]
@@ -188,5 +188,9 @@ def convert_and_preprocess(data_list, dt_thresh=1000, elapsed_thresh=1500,
           f'dt min: {coords_dt[:, :, -1].min()}' +
           f'dt max: {coords_dt[:, :, -1].max()}')
     coords_dt[:, :, :-1] = minmax_normalize(coords_dt[:, :, :-1])
-    coords_dt[:, :, -1] = minmax_normalize(coords_dt[:, :, -1], [0, 1])
+    if norm_dt:
+        coords_dt[:, :, -1] = minmax_normalize(coords_dt[:, :, -1], [0, 1])
+    else:
+        coords_dt[:, :, -1] = coords_dt[:, :, -1] / 1000
+
     return coords_dt
