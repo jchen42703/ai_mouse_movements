@@ -10,7 +10,7 @@ setup(name='pymousegan',
       packages=find_packages(),
       install_requires=[
           'numpy',
-          'tensorflow',
+          'tensorflow==2.3.1',  # fails when 2.4.0
           'pandas',
           'matplotlib'
       ],
