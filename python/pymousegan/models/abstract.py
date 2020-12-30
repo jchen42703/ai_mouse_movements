@@ -2,6 +2,7 @@ import abc
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from pymousegan.plot import plot_paths
 
@@ -192,9 +193,16 @@ class GAN(metaclass=abc.ABCMeta):
         """
         noise = self.generator.generate_noise(num_paths)
         fake_paths = self.generator.model.predict(noise)
+        # plot paths
         plot_paths(fake_paths)
         save_path = os.path.join(output_dir, f'path_{curr_epoch}.png')
         plt.savefig(save_path, transparent=True)
+        plt.close()
+
+        # plot dt
+        dt_plot = sns.histplot(fake_paths[:, :, -1].flatten())
+        save_path = os.path.join(output_dir, f'dt_{curr_epoch}.png')
+        dt_plot.get_figure().savefig(save_path, transparent=True)
         plt.close()
 
     def plot_loss(self, output_dir=os.getcwd()):
