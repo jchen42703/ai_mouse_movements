@@ -184,11 +184,12 @@ def convert_and_preprocess(data_list, dt_thresh=1000, elapsed_thresh=1500,
                                                      dest=[1, 1], abs=True)
     coords_dt = remove_outliers(coords_dt, dt_thresh, elapsed_thresh,
                                 value_thresh=value_thresh, num_loops=num_loops)
-    print('Before minmax normalization; ' +
-          f'dt min: {coords_dt[:, :, -1].min()}' +
-          f'dt max: {coords_dt[:, :, -1].max()}')
+
     coords_dt[:, :, :-1] = minmax_normalize(coords_dt[:, :, :-1])
     if norm_dt:
+        print('Before minmax normalization; ' +
+              f'dt min: {coords_dt[:, :, -1].min()}' +
+              f'dt max: {coords_dt[:, :, -1].max()}')
         coords_dt[:, :, -1] = minmax_normalize(coords_dt[:, :, -1], [0, 1])
     else:
         coords_dt[:, :, -1] = coords_dt[:, :, -1] / 1000
