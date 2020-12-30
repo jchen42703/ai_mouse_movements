@@ -1,6 +1,6 @@
 import numpy as np
 
-from .preprocessor import mode
+from pymousegan.io.preprocessor import mode, scale_coords_uniform_dest
 
 
 def json_to_numpy(data_list):
@@ -97,9 +97,9 @@ def remove_bad_indices(paths, bad_indices):
 def get_oob_paths_idx(paths, value_thresh=1):
     """Get indices for the paths that have values > 1.
     """
-    bad_indices = np.unique(np.where(paths > value_thresh)[0])
-    print(f'Number of Paths with Coords > 1: {len(bad_indices)}')
-    return bad_indices
+    bad_indices = np.unique(np.where(np.abs(paths) > value_thresh)[0])
+    print(f'Number of Paths with Coords > {value_thresh}: {len(bad_indices)}')
+    return bad_indices.tolist()
 
 
 def get_excessive_loops_idx(paths, num_loops=30):
@@ -115,12 +115,12 @@ def get_excessive_loops_idx(paths, num_loops=30):
     return bad_indices
 
 
-def get_nan_idx(self, paths):
+def get_nan_idx(paths):
     """When the destination has 0 in either X, Y
     """
     bad_indices = np.unique(np.where(np.isnan(paths))[0])
     print(f'Number of Paths with NaN: {len(bad_indices)}')
-    return bad_indices
+    return bad_indices.tolist()
 
 
 def get_bad_dt(dt, dt_thresh=1000, elapsed_thresh=2000):
@@ -147,19 +147,44 @@ def remove_outliers(coords_dt, dt_thresh=1000, elapsed_thresh=2000,
     oob = get_oob_paths_idx(coords_dt[:, :, :-1], value_thresh=value_thresh)
     excessive = get_excessive_loops_idx(coords_dt[:, :, :-1],
                                         num_loops=num_loops)
+    nan = get_nan_idx(coords_dt)
     # removing the bad paths
-    bad_path_idx = np.unique(bad_dt + oob + excessive)
+    bad_path_idx = np.unique(bad_dt + oob + excessive + nan)
     print(f'{len(bad_path_idx)} total number of outliers.')
     return remove_bad_indices(coords_dt, bad_path_idx)
+
+
+def translate_to_origin(paths):
+    """Translates the starting points of the paths to (0, 0)
+    Args:
+        paths (np.ndarray): of arrays of coordinates with shape
+            (num_paths, path_count, 2)
+    Returns:
+        paths (np.ndarray): translated path coords
+            with the same shape as `paths`
+        offset (np.ndarray): the offset to unnormalize the array
+            start + offset = [0, 0]
+            pred - offset = pred
+    """
+    # normalize to origin
+    # normalize the starting point to origin
+    # so that start + offset = [0, 0] & pred (assumes [0, 0])
+    # so pred - offset = pred assuming start as the starting point
+    offset = -paths[:, 0][:, None]
+    paths = np.add(paths, offset)
+    return (paths, offset)
 
 
 def convert_and_preprocess(data_list, dt_thresh=1000, elapsed_thresh=1500,
                            value_thresh=1.05, num_loops=30):
     coords_dt = json_to_numpy(data_list)
     coords_dt[:, :, -1] = t_to_dt(coords_dt[:, :, -1])
+    coords_dt[:, :, :-1] = translate_to_origin(coords_dt[:, :, :-1])[0]
+    coords_dt[:, :, :-1] = scale_coords_uniform_dest(coords_dt[:, :, :-1],
+                                                     dest=[1, 1], abs=True)
     coords_dt = remove_outliers(coords_dt, dt_thresh, elapsed_thresh,
                                 value_thresh=value_thresh, num_loops=num_loops)
-    print('Before minmax normalization;' +
+    print('Before minmax normalization; ' +
           f'dt min: {coords_dt[:, :, -1].min()}' +
           f'dt max: {coords_dt[:, :, -1].max()}')
     coords_dt[:, :, :-1] = minmax_normalize(coords_dt[:, :, :-1])
