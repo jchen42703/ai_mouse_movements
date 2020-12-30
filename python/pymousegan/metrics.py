@@ -15,8 +15,8 @@ def soft_binary_accuracy(y_true, y_pred, threshold=0.5):
     Args:
       y_true: Ground truth values. shape = `[batch_size, d0, .. dN]`.
       y_pred: The predicted values. shape = `[batch_size, d0, .. dN]`.
-      threshold: (Optional) Float representing the threshold for deciding whether
-        prediction values are 1 or 0.
+      threshold: (Optional) Float representing the threshold for deciding
+        whether prediction values are 1 or 0.
     Returns:
       Binary accuracy values. shape = `[batch_size, d0, .. dN-1]`
     """

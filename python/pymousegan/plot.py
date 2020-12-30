@@ -43,7 +43,8 @@ def plot_paths(paths):
     return
 
 
-def plot_single_label_pred_paths(model, label_path, pred_input, figsize=(10, 5)):
+def plot_single_label_pred_paths(model, label_path, pred_input,
+                                 figsize=(10, 5)):
     """Plots single label, pred pair paths.
 
     Args:
@@ -79,7 +80,8 @@ def plot_label_pred_paths(model, label_paths, pred_inputs):
     """Plots multiple paths.
 
     Args:
-        label_paths (np.ndarray): with shape (num_paths, num_coords_per_path, 2)
+        label_paths (np.ndarray): with shape
+            (num_paths, num_coords_per_path, 2)
         pred_inputs (np.ndarray): with shape (num_paths, 2)
     """
     plt.figure(1)

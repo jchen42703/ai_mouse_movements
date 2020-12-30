@@ -162,8 +162,9 @@ class GAN(metaclass=abc.ABCMeta):
             initial_epoch (int): The initial epoch to start training from
         """
         if save_format == 'tf':
-            raise Exception(
-                'Saving as .tf is currently not recommended because it doesnt save the optimizer state as of tf v.2.3.1')
+            raise Exception('Saving as .tf is currently not recommended ' +
+                            'because it doesnt save the optimizer state as ' +
+                            'of tf v.2.3.1')
 
         self.discrim_loss = []
         self.gen_loss = []
@@ -225,14 +226,14 @@ class GAN(metaclass=abc.ABCMeta):
             num_epochs (int): Number of epochs; used to name the weights
         """
         self.discriminator.model.trainable = False
-        combined_save_path = os.path.join(save_dir,
-                                          f'combined_{num_epochs}_weights.{save_format}')
+        combined_save_path = os.path.join(save_dir, f'combined_{num_epochs}' +
+                                          f'_weights.{save_format}')
         print(f'Saving combined at {combined_save_path}...')
         self.combined.save(combined_save_path, save_format=save_format)
 
         self.discriminator.model.trainable = True
-        discrim_save_path = os.path.join(save_dir,
-                                         f'discrim_{num_epochs}_weights.{save_format}')
+        discrim_save_path = os.path.join(save_dir, f'discrim_{num_epochs}' +
+                                         f'_weights.{save_format}')
         print(f'Saving discriminator at {discrim_save_path}...')
         self.discriminator.model.save(discrim_save_path,
                                       save_format=save_format)
