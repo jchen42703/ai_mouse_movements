@@ -10,14 +10,14 @@ async function loadModel(modelPath) {
   return model;
 }
 
-function getModelPred(pred_model, start, destination) {
-  /** 
+/** 
   Gets the predicted path based on the origin and destination
   * @param {tf.model} pred_model 
   * @param {array} start [X_start, Y_start]
   * @param {array} destination [X_dest, Y_dest]
   * @return {tf.Tensor} pred with shape (1, 100, 2)
   */
+function getModelPred(pred_model, start, destination) {
   // convert to tensors
   var start = tf.tensor2d(start, [1, 2]);
   var dest = tf.tensor2d(destination, [1, 2]);
@@ -58,19 +58,19 @@ function minmaxNormalize(
   return normArr;
 }
 
+/**
+ * Undos minmaxNormalize.
+ * @param {tf.Tensor} normArr input array to normalize
+ * @param {array-like of tf.scalar} minmax array specifying the minimum and maximum of `arr`. If left as null,
+   the minmax is automatically calculated.
+ * @param {array-like of tf.scalar} normRange array of 2 integers specifying normalizing range
+ * @return {tf.Tensor} the normalized tensor
+ */
 function minmaxUnnormalize(
   normArr,
   minmax,
   normRange = [tf.scalar(-1), tf.scalar(1)]
 ) {
-  /**
-   * Undos minmaxNormalize.
-   * @param {tf.Tensor} normArr input array to normalize
-   * @param {array-like of tf.scalar} minmax array specifying the minimum and maximum of `arr`. If left as null,
-    the minmax is automatically calculated.
-   * @param {array-like of tf.scalar} normRange array of 2 integers specifying normalizing range
-   * @return {tf.Tensor} the normalized tensor
-   */
   const min = minmax[0];
   const max = minmax[1];
   const scalingFactor = normRange[1].sub(normRange[0]);
@@ -84,15 +84,15 @@ function minmaxUnnormalize(
   return arr;
 }
 
+/** 
+ Clean for single predictions, but don't use for multiple predictions.
+ * @param {string} modelPath relative model path (relative to `index.js`)
+ * @param {tf.model} pred_model 
+ * @param {array} start [X_start, Y_start]
+ * @param {array} destination [X_dest, Y_dest]
+ * @return {tf.Tensor} pred with shape (1, 100, 2)
+ */
 async function loadAndPredict(modelPath, start, destination) {
-  /** 
-   Clean for single predictions, but don't use for multiple predictions.
-   * @param {string} modelPath relative model path (relative to `index.js`)
-   * @param {tf.model} pred_model 
-   * @param {array} start [X_start, Y_start]
-   * @param {array} destination [X_dest, Y_dest]
-   * @return {tf.Tensor} pred with shape (1, 100, 2)
-   */
   /* Loads the model locally from the relative model path, `modelPath`*/
   const model = await tf.loadLayersModel(`file://${modelPath}`);
   // convert to tensors
