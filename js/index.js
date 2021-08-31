@@ -1,5 +1,4 @@
 const predAPI = require("./src/predictAPI.js");
-const path = require("path");
 const express = require("express");
 const app = express();
 
@@ -20,11 +19,6 @@ app.post("/", (req, res) => {
     res.send(mouseJson);
   });
 });
-
-// app.get("/", (req, res) => {
-//   res.sendFile(path.join(__dirname, relativeModelPath));
-//   res.end("File sent!");
-// });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
