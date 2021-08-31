@@ -21,10 +21,10 @@ app.post("/", (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, relativeModelPath));
-  res.end("File sent!");
-});
+// app.get("/", (req, res) => {
+//   res.sendFile(path.join(__dirname, relativeModelPath));
+//   res.end("File sent!");
+// });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
