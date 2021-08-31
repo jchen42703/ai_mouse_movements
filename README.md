@@ -70,6 +70,12 @@ Here are the model summaries:
 
 ### Getting Started [Client]
 
+```
+cd js
+npm install .
+nodemon index.js
+```
+
 1. Install dependencies with `npm install`
 2. `nodemon index.js` or `node index.js` to run the server on `PORT=3000`.
 3. Send a `POST` request (`json`) to `http://localhost:3000/`, such as:
