@@ -21,6 +21,7 @@ Send POST requests to automatically move your mouse with a neural network!
       - [From `tf.keras` to `.json`](#from-tfkeras-to-json)
     - [Dependencies](#dependencies-1)
     - [How does it work?](#how-does-it-work)
+    - [How fast is the api?](#how-fast-is-the-api)
 
 ---
 
@@ -139,3 +140,9 @@ tensorflowjs_converter --input_format=keras model/weights.h5 model/tfjs_model
   ]
 }
 ```
+
+### How fast is the api?
+
+On average, it runs from 390ms to 430ms
+
+- For cold starts: 500ms - 600ms
