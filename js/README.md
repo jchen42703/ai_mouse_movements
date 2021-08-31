@@ -9,12 +9,9 @@
 ```
 {
     "start": [1, 1],
-    "destination": [82 ,55],
-    "moveMouse": 1
+    "destination": [82 ,55]
 }
 ```
-
-If you want a `json` response of the coords and lags, then do `"mouseMove": 0`.
 
 ## Model Conversion (`tf.keras` to `.json`)
 
