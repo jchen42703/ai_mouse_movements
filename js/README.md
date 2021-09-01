@@ -12,18 +12,18 @@ All provided commands will be with `gdown`:
 pip install gdown
 ```
 
-To install the discriminator (`discrim_15001_weights.h5`) into `/src/discrim_model` from `/js`:
-
-```
-cd src/discrim_model
-gdown https://drive.google.com/uc?id=1c0abQkEHZH4cpGpZxM9AekTLxYPKMWHA
-```
-
 To install the generator (`gen_15001_weights.h5`) from `/js`:
 
 ```
 cd src/model
 gdown https://drive.google.com/uc?id=1Jf0GF1picX9lM0ZuDKusfLksIe_RAil1
+```
+
+To install the discriminator (`discrim_15001_weights.h5`) into `/src/discrim_model` from `/js`:
+
+```
+cd src/discrim_model
+gdown https://drive.google.com/uc?id=1c0abQkEHZH4cpGpZxM9AekTLxYPKMWHA
 ```
 
 ## Model Conversion (`tf.keras` to `.json`)
