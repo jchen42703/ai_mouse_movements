@@ -1,9 +1,10 @@
 import numpy as np
 import os
 
+
 class Preprocessor(object):
     """Class for preprocessing data.
-    
+
     All preprocessing procedures:
     * Scale all of the paths to have a destination of [1, 1].
     * Option to remove all of the coordinates with large loops
@@ -11,6 +12,7 @@ class Preprocessor(object):
         OOB during post-processing.
     * Option to combine the coordinates and the time differences (delays).
     """
+
     def __init__(self, filter_coords=True, combine_dt=True, save_dir=None):
         """
         Args:
@@ -21,7 +23,7 @@ class Preprocessor(object):
         self.FILTER_FLAG = filter_coords
         self.COMBINE_COORDS_DT_FLAG = combine_dt
         self.save_dir = save_dir
-        self.bad_indices = [] # coordinates to remove
+        self.bad_indices = []  # coordinates to remove
 
     @staticmethod
     def remove_bad_indices(paths, bad_indices):
@@ -44,7 +46,7 @@ class Preprocessor(object):
 
     def get_excessive_loops_idx(self, paths):
         """Get indices for the paths that have excessive loops.
-        
+
         Problem: Also removes a lot of paths that go straight up, but it's
         kinda okay because a lot of those paths are janky af.
         """
@@ -54,7 +56,7 @@ class Preprocessor(object):
                 bad_indices.append(i)
         print(f'Number of Excessive Loops: {len(bad_indices)}')
         self.bad_indices.extend(bad_indices)
-    
+
     def get_nan_idx(self, paths):
         """When the destination has 0 in either X, Y
         """
@@ -82,7 +84,7 @@ class Preprocessor(object):
         return dt_arr
 
     def combine_coords_dt(self, coords, dt_arr):
-        return np.dstack([coords, dt_arr])        
+        return np.dstack([coords, dt_arr])
 
     def preprocess(self, paths, dt_arr, dest=[1, 1]):
         """Main preprocessing method. Preprocesses and saves if specified.
