@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='pymousegan',
-      version='0.0.1',
+      version='0.0.2',
       description='Library for models for generating random mouse movements',
       url='',
       author='Joseph Chen',
@@ -10,7 +10,7 @@ setup(name='pymousegan',
       packages=find_packages(),
       install_requires=[
           'numpy',
-          'tensorflow',
+          'tensorflow==2.3.1',  # fails when 2.4.0
           'pandas',
           'matplotlib'
       ],

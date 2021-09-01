@@ -64,3 +64,19 @@ model_paths = {
 gan = AdditiveBasicGAN(discrim, generator, d_opt, g_opt, data_aug=unique_batch_reflect,
                        model_paths=model_paths)
 ```
+
+## Data Overview
+
+| Version    | Mean                 | Standard Deviation   | Min | Max                |
+| ---------- | -------------------- | -------------------- | --- | ------------------ |
+| 1 (Coords) | 0.40060340244877796  | 0.30481079223569346  | 0   | 1                  |
+| 1 (Lags)   | 0.04112467233758684  | 0.06005927064482218  | 0   | 0.9948674898815393 |
+| 2 (Coords) | 0.002016191045743645 | 0.5068689870095336   | -1  | 1                  |
+| 2 (Lags)   | 0.004615704000000001 | 0.013158585432499348 | 0   | 0.989              |
+
+### `coords_dt_v2.npy`
+
+The paths in this dataset are generally much faster than those in v1. For instance, the distribution in v1 looks like this:
+![](./images/v1_lags.png)
+But the distribution for v2 looks like this:
+![](./images/v2_lags.png)

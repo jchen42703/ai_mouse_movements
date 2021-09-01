@@ -2,6 +2,7 @@ import abc
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from pymousegan.plot import plot_paths
 
@@ -161,8 +162,9 @@ class GAN(metaclass=abc.ABCMeta):
             initial_epoch (int): The initial epoch to start training from
         """
         if save_format == 'tf':
-            raise Exception(
-                'Saving as .tf is currently not recommended because it doesnt save the optimizer state as of tf v.2.3.1')
+            raise Exception('Saving as .tf is currently not recommended ' +
+                            'because it doesnt save the optimizer state as ' +
+                            'of tf v.2.3.1')
 
         self.discrim_loss = []
         self.gen_loss = []
@@ -192,9 +194,16 @@ class GAN(metaclass=abc.ABCMeta):
         """
         noise = self.generator.generate_noise(num_paths)
         fake_paths = self.generator.model.predict(noise)
+        # plot paths
         plot_paths(fake_paths)
         save_path = os.path.join(output_dir, f'path_{curr_epoch}.png')
         plt.savefig(save_path, transparent=True)
+        plt.close()
+
+        # plot dt
+        dt_plot = sns.histplot(fake_paths[:, :, -1].flatten())
+        save_path = os.path.join(output_dir, f'dt_{curr_epoch}.png')
+        dt_plot.get_figure().savefig(save_path, transparent=True)
         plt.close()
 
     def plot_loss(self, output_dir=os.getcwd()):
@@ -217,14 +226,14 @@ class GAN(metaclass=abc.ABCMeta):
             num_epochs (int): Number of epochs; used to name the weights
         """
         self.discriminator.model.trainable = False
-        combined_save_path = os.path.join(save_dir,
-                                          f'combined_{num_epochs}_weights.{save_format}')
+        combined_save_path = os.path.join(save_dir, f'combined_{num_epochs}' +
+                                          f'_weights.{save_format}')
         print(f'Saving combined at {combined_save_path}...')
         self.combined.save(combined_save_path, save_format=save_format)
 
         self.discriminator.model.trainable = True
-        discrim_save_path = os.path.join(save_dir,
-                                         f'discrim_{num_epochs}_weights.{save_format}')
+        discrim_save_path = os.path.join(save_dir, f'discrim_{num_epochs}' +
+                                         f'_weights.{save_format}')
         print(f'Saving discriminator at {discrim_save_path}...')
         self.discriminator.model.save(discrim_save_path,
                                       save_format=save_format)

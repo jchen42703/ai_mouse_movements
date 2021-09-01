@@ -1,9 +1,10 @@
 import numpy as np
 import os
 
+
 class Preprocessor(object):
     """Class for preprocessing data.
-    
+
     All preprocessing procedures:
     * Scale all of the paths to have a destination of [1, 1].
     * Option to remove all of the coordinates with large loops
@@ -11,6 +12,7 @@ class Preprocessor(object):
         OOB during post-processing.
     * Option to combine the coordinates and the time differences (delays).
     """
+
     def __init__(self, filter_coords=True, combine_dt=True, save_dir=None):
         """
         Args:
@@ -21,7 +23,7 @@ class Preprocessor(object):
         self.FILTER_FLAG = filter_coords
         self.COMBINE_COORDS_DT_FLAG = combine_dt
         self.save_dir = save_dir
-        self.bad_indices = [] # coordinates to remove
+        self.bad_indices = []  # coordinates to remove
 
     @staticmethod
     def remove_bad_indices(paths, bad_indices):
@@ -44,7 +46,7 @@ class Preprocessor(object):
 
     def get_excessive_loops_idx(self, paths):
         """Get indices for the paths that have excessive loops.
-        
+
         Problem: Also removes a lot of paths that go straight up, but it's
         kinda okay because a lot of those paths are janky af.
         """
@@ -54,7 +56,7 @@ class Preprocessor(object):
                 bad_indices.append(i)
         print(f'Number of Excessive Loops: {len(bad_indices)}')
         self.bad_indices.extend(bad_indices)
-    
+
     def get_nan_idx(self, paths):
         """When the destination has 0 in either X, Y
         """
@@ -82,7 +84,7 @@ class Preprocessor(object):
         return dt_arr
 
     def combine_coords_dt(self, coords, dt_arr):
-        return np.dstack([coords, dt_arr])        
+        return np.dstack([coords, dt_arr])
 
     def preprocess(self, paths, dt_arr, dest=[1, 1]):
         """Main preprocessing method. Preprocesses and saves if specified.
@@ -118,17 +120,24 @@ def mode(x):
     return values[m], counts[m]
 
 
-def scale_to_dest(path, dest=[1, 1], verbose=0):
+def scale_to_dest(path, dest=[1, 1], abs=False, verbose=0):
     """Scales a single path to have a specified destination.
 
     Args:
         path (np.ndarray): a path with shape (100, 2 (or 3))
+        dest (list/tuple): the final (x, y) coordinates you want for each path
+        abs (boolean): Whether or not to preserve the direction of the path
         verbose (boolean/int): whether or not to print the scale factors
+
     Returns:
         np.ndarray with the same shape as `path` but with the destination, dest
     """
-    x_scale_factor = dest[0] / path[-1][0]
-    y_scale_factor = dest[1] / path[-1][1]
+    if abs:
+        x_scale_factor = dest[0] / np.abs(path[-1][0])
+        y_scale_factor = dest[1] / np.abs(path[-1][1])
+    else:
+        x_scale_factor = dest[0] / path[-1][0]
+        y_scale_factor = dest[1] / path[-1][1]
 
     if verbose:
         print(f'X Scale Factor: {x_scale_factor}')
@@ -140,9 +149,9 @@ def scale_to_dest(path, dest=[1, 1], verbose=0):
     return path
 
 
-def scale_coords_uniform_dest(coords, dest=[1, 1]):
+def scale_coords_uniform_dest(coords, dest=[1, 1], abs=False):
     scaled = np.zeros(coords.shape)
 
     for i, arr in enumerate(coords):
-        scaled[i] = scale_to_dest(arr, dest=dest, verbose=0)
+        scaled[i] = scale_to_dest(arr, dest=dest, abs=abs, verbose=0)
     return scaled
